@@ -18,7 +18,7 @@ let rect2 = {
   x : 20,
   y : innerHeight / 2 - 100,
   height: 100,
-  speed: 10,
+  speed: 5,
   width: 10,
 }
 
@@ -49,7 +49,10 @@ function move() {
     rect1.y = Math.min(rect1.y + rect1.speed, innerHeight - rect1.height);
   else
     rect1.y = Math.max(rect1.y + rect1.speed, 0);
-
+  if (circ.y > rect2.y)
+    rect2.y = Math.min(rect2.y + rect2.speed, innerHeight - rect2.height);
+  else
+    rect2.y = Math.max(rect2.y - rect2.speed, 0);
 }
 
 function update() {

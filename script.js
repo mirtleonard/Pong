@@ -11,7 +11,7 @@ let rect1 = {
   y : innerHeight / 2 - 100,
   height : 100,
   width : 10,
-  speed : 10,
+  speed : 0,
 }
 
 let rect2 = {
@@ -45,6 +45,11 @@ function move() {
 		circ.vy = 0 - circ.vy;
 	circ.x = circ.x + circ.vx;
 	circ.y = circ.y + circ.vy;
+  if (rect1.speed > 0)
+    rect1.y = Math.min(rect1.y + rect1.speed, innerHeight - rect1.height);
+  else
+    rect1.y = Math.max(rect1.y + rect1.speed, 0);
+
 }
 
 function update() {
@@ -63,4 +68,19 @@ function draw(coord) {
     board.stroke();
     board.fill();
     board.closePath();
+}
+
+document.addEventListener('keydown', start_moving);
+document.addEventListener('keyup', stop_moving);
+
+function start_moving(event) {
+    if (event.key == 'ArrowDown')
+      rect1.speed = 10;
+    else if (event.key == 'ArrowUp')
+      rect1.speed = -10;
+}
+
+function stop_moving(event) {
+  if (event.key == 'ArrowUp' || event.key == 'ArrowDown')
+    rect1.speed = 0;
 }

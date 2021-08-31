@@ -30,10 +30,27 @@ let circ = {
   vy : 5,
 }
 
+move();
+
+function move() {
+  requestAnimationFrame(move);
+  update();
+	if (circ.radius + circ.x > innerWidth)
+		circ.vx = 0 - circ.vx;
+	if (circ.x - circ.radius < 0)
+		circ.vx = 0 - circ.vx;
+	if (circ.y + circ.radius > innerHeight)
+		circ.vy = 0 - circ.vy;
+	if (circ.y - circ.radius < 0)
+		circ.vy = 0 - circ.vy;
+	circ.x = circ.x + circ.vx;
+	circ.y = circ.y + circ.vy;
+}
+
 function update() {
     board.clearRect(0, 0, innerWidth, innerHeight);
-    draw(react1);
-    draw(react2);
+    draw(rect1);
+    draw(rect2);
     draw(circ);
 }
 

@@ -45,15 +45,6 @@ function start() {
   move();
 }
 
-function rotate(velocity, angle) {
-    const rotatedVelocities = {
-        x: velocity.x * Math.cos(angle) - velocity.y * Math.sin(angle),
-        y: velocity.x * Math.sin(angle) + velocity.y * Math.cos(angle)
-    };
-
-    return rotatedVelocities;
-}
-
 function collision(obj) {
     let dx = Math.max(obj.x, Math.min(circ.x, obj.x + obj.width)) - circ.x;
     let dy = Math.max(obj.y, Math.min(circ.y, obj.y + obj.height)) - circ.y;

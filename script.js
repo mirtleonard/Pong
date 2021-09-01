@@ -36,8 +36,11 @@ start();
 function start() {
   circ.x = width / 2;
   circ.y = height / 2;
-  circ.vx = (Math.random() - 0.5) * 20;
-  circ.vy = (Math.random() - 0.5) * 20;
+  let dir = 1;
+  if (Math.random() >= 0.5)
+    dir = -1;
+  circ.vx = (5 + Math.random() * 5) * dir;
+  circ.vy = 0;
   gameOver = false;
   move();
 }
@@ -52,13 +55,18 @@ function rotate(velocity, angle) {
 }
 
 function collision(obj) {
-    let x = Math.max(obj.x, Math.min(circ.x, obj.x + obj.width));
-    let y = Math.max(obj.y, Math.min(circ.y, obj.y + obj.height));
-    let dx = Math.abs(x - circ.x);
-    let dy = Math.abs(y - circ.y);
+    let dx = Math.max(obj.x, Math.min(circ.x, obj.x + obj.width)) - circ.x;
+    let dy = Math.max(obj.y, Math.min(circ.y, obj.y + obj.height)) - circ.y;
     if (dx * dx + dy * dy > circ.radius * circ.radius)
       return false;
-    return true;
+    let collidePoint = circ.y - (obj.y + obj.height / 2)
+    collidePoint = collidePoint / (obj.height / 2);
+    const angle = collidePoint * Math.PI / 4;
+    dir = 1;
+    if (obj.x > circ.x)
+      dir *= -1;
+    circ.vx = Math.cos(angle) * 10 * dir;
+    circ.vy = Math.sin(angle) * 10 * dir;
 }
 
 function move() {
@@ -73,12 +81,8 @@ function move() {
     gameOver = true;
     document.querySelector('h3').innerHTML = 'Score ' + player1 + ' - ' + player2;
   }
-  let collide = collision(rect1);
-  if (collide == false)
-    collide = collision(rect2);
-  if (collide != false) {
-      circ.vx = -circ.vx;
-  }
+  if (!collision(rect1))
+    collision(rect2);
 	if (circ.y + circ.radius > height)
 		circ.vy = -circ.vy;
 	if (circ.y - circ.radius < 0)
@@ -89,9 +93,9 @@ function move() {
     rect1.y = Math.min(rect1.y + rect1.speed, height - rect1.height);
   else
     rect1.y = Math.max(rect1.y + rect1.speed, 0);
-  if (circ.y > rect2.y)
+  if (circ.y > rect2.y + rect2.height / 2)
     rect2.y = Math.min(rect2.y + rect2.speed, height - rect2.height);
-  else
+  else if (circ.y < rect2.y)
     rect2.y = Math.max(rect2.y - rect2.speed, 0);
   if (!gameOver)
     requestAnimationFrame(move);

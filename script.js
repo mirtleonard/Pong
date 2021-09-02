@@ -7,7 +7,7 @@ board.strokeStyle = 'white';
 board.fillStyle = 'white';
 let gameOver = false;
 
-let rect1 = {
+let paddle1 = {
   x : width - 30,
   y : height / 2 - 100,
   height : 100,
@@ -15,7 +15,7 @@ let rect1 = {
   speed : 0,
 }
 
-let rect2 = {
+let paddle2 = {
   x : 20,
   y : height / 2 - 100,
   height: 100,
@@ -23,7 +23,7 @@ let rect2 = {
   width: 10,
 }
 
-let circ = {
+let ball = {
   x : width / 2,
   y : height / 2,
   radius : 10,
@@ -34,69 +34,70 @@ let circ = {
 start();
 
 function start() {
-  circ.x = width / 2;
-  circ.y = height / 2;
+  ball.x = width / 2;
+  ball.y = height / 2;
   let dir = 1;
   if (Math.random() >= 0.5)
     dir = -1;
-  circ.vx = (5 + Math.random() * 5) * dir;
-  circ.vy = 0;
+  ball.vx = (5 + Math.random() * 5) * dir;
+  ball.vy = 0;
   gameOver = false;
   move();
 }
 
 function collision(obj) {
-    let dx = Math.max(obj.x, Math.min(circ.x, obj.x + obj.width)) - circ.x;
-    let dy = Math.max(obj.y, Math.min(circ.y, obj.y + obj.height)) - circ.y;
-    if (dx * dx + dy * dy > circ.radius * circ.radius)
+    let dx = Math.max(obj.x, Math.min(ball.x, obj.x + obj.width)) - ball.x;
+    let dy = Math.max(obj.y, Math.min(ball.y, obj.y + obj.height)) - ball.y;
+    if (dx * dx + dy * dy > ball.radius * ball.radius)
       return false;
-    let collidePoint = circ.y - (obj.y + obj.height / 2)
+    let collidePoint = ball.y - (obj.y + obj.height / 2)
     collidePoint = collidePoint / (obj.height / 2);
     const angle = collidePoint * Math.PI / 4;
     dir = 1;
-    if (obj.x > circ.x)
+    if (obj.x > ball.x)
       dir *= -1;
-    circ.vx = Math.cos(angle) * 10 * dir;
-    circ.vy = Math.sin(angle) * 10 * dir;
+    ball.vx = Math.cos(angle) * 10 * dir;
+    ball.vy = Math.sin(angle) * 10 * dir;
+    return true;
 }
 
 function move() {
   update();
-	if (circ.radius + circ.x > width) {
+	if (ball.radius + ball.x > width) {
     player1++;
     gameOver = true;
     document.querySelector('h3').innerHTML = 'Score ' + player1 + ' - ' + player2;
   }
-	if (circ.x - circ.radius < 0) {
+	if (ball.x - ball.radius < 0) {
     player2++;
     gameOver = true;
     document.querySelector('h3').innerHTML = 'Score ' + player1 + ' - ' + player2;
   }
-  if (!collision(rect1))
-    collision(rect2);
-	if (circ.y + circ.radius > height)
-		circ.vy = -circ.vy;
-	if (circ.y - circ.radius < 0)
-		circ.vy = -circ.vy;
-	circ.x = circ.x + circ.vx;
-	circ.y = circ.y + circ.vy;
-  if (rect1.speed > 0)
-    rect1.y = Math.min(rect1.y + rect1.speed, height - rect1.height);
+  if (!collision(paddle1))
+    collision(paddle2);
+	if (ball.y + ball.radius > height)
+		ball.vy = -ball.vy;
+	if (ball.y - ball.radius < 0)
+		ball.vy = -ball.vy;
+	ball.x = ball.x + ball.vx;
+	ball.y = ball.y + ball.vy;
+  if (paddle1.speed > 0)
+    paddle1.y = Math.min(paddle1.y + paddle1.speed, height - paddle1.height);
   else
-    rect1.y = Math.max(rect1.y + rect1.speed, 0);
-  if (circ.y > rect2.y + rect2.height / 2)
-    rect2.y = Math.min(rect2.y + rect2.speed, height - rect2.height);
-  else if (circ.y < rect2.y)
-    rect2.y = Math.max(rect2.y - rect2.speed, 0);
+    paddle1.y = Math.max(paddle1.y + paddle1.speed, 0);
+  if (ball.y > paddle2.y + paddle2.height / 2)
+    paddle2.y = Math.min(paddle2.y + paddle2.speed, height - paddle2.height);
+  else if (ball.y < paddle2.y)
+    paddle2.y = Math.max(paddle2.y - paddle2.speed, 0);
   if (!gameOver)
     requestAnimationFrame(move);
 }
 
 function update() {
     board.clearRect(0, 0, width, height);
-    draw(rect1);
-    draw(rect2);
-    draw(circ);
+    draw(paddle1);
+    draw(paddle2);
+    draw(ball);
 }
 
 function draw(coord) {
@@ -114,16 +115,15 @@ document.addEventListener('keydown', start_moving);
 document.addEventListener('keyup', stop_moving);
 
 function start_moving(event) {
-    if (gameOver) {
-      start();
-    }
     if (event.key == 'ArrowDown')
-      rect1.speed = 10;
+      paddle1.speed = 10;
     else if (event.key == 'ArrowUp')
-      rect1.speed = -10;
+      paddle1.speed = -10;
+    if (gameOver)
+      start();
 }
 
 function stop_moving(event) {
   if (event.key == 'ArrowUp' || event.key == 'ArrowDown')
-    rect1.speed = 0;
+    paddle1.speed = 0;
 }

@@ -57,7 +57,7 @@ function collision(obj) {
     if (obj.x > ball.x)
       dir *= -1;
     ball.vx = Math.cos(angle) * 10 * dir;
-    ball.vy = Math.sin(angle) * 10 * dir;
+    ball.vy = Math.sin(angle) * 10;
     return true;
 }
 
